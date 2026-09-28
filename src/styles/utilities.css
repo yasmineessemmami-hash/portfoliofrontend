@@ -1,0 +1,7 @@
+/* Utility Layer Styles */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+

@@ -1,0 +1,141 @@
+/* 
+ * Global Theme System - Backend-Driven
+ * 
+ * Strategy for Tailwind v4:
+ * 1. @theme defines design tokens with default values (build-time)
+ * 2. :root defines CSS variables with same names (runtime defaults)
+ * 3. Backend overrides :root variables at runtime via applyTheme()
+ * 4. Tailwind classes use @theme values (build-time, but can be overridden via CSS cascade)
+ * 5. Inline styles use :root variables (runtime)
+ * 
+ * Note: Tailwind v4 processes @theme at build time, but CSS cascade allows
+ * :root variables to override for runtime theming when using CSS custom properties.
+ */
+
+/* Define CSS variables in :root first (with defaults) */
+/* Backend will override these at runtime */
+:root {
+  /* Color System - HSL format */
+  --color-background: hsl(220 25% 6%);
+  --color-foreground: hsl(210 20% 98%);
+  --color-card: hsl(220 25% 10%);
+  --color-card-foreground: hsl(210 20% 98%);
+  --color-popover: hsl(220 25% 10%);
+  --color-popover-foreground: hsl(210 20% 98%);
+  --color-primary: hsl(175 70% 45%);
+  --color-primary-foreground: hsl(220 25% 6%);
+  --color-secondary: hsl(220 20% 14%);
+  --color-secondary-foreground: hsl(210 20% 90%);
+  --color-muted: hsl(220 15% 20%);
+  --color-muted-foreground: hsl(215 15% 55%);
+  --color-accent: hsl(175 60% 35%);
+  --color-accent-foreground: hsl(210 20% 98%);
+  --color-destructive: hsl(0 84.2% 60.2%);
+  --color-destructive-foreground: hsl(210 40% 98%);
+  --color-border: hsl(220 15% 18%);
+  --color-input: hsl(220 15% 18%);
+  --color-ring: hsl(175 70% 45%);
+
+  /* Custom colors */
+  --color-glow: hsl(175 70% 45%);
+  --color-surface: hsl(220 25% 12%);
+  --color-surface-hover: hsl(220 25% 16%);
+  --color-text-primary: hsl(210 20% 98%);
+  --color-text-secondary: hsl(215 15% 65%);
+  --color-text-muted: hsl(215 10% 45%);
+
+  /* Status Colors */
+  --color-success: hsl(142 76% 36%);
+  --color-error: hsl(0 84.2% 60.2%);
+  --color-warning: hsl(38 92% 50%);
+
+  /* Border Radius */
+  --radius: 0.75rem;
+
+  /* Shorthand variables for inline styles */
+  --background: var(--color-background);
+  --foreground: var(--color-foreground);
+  --primary: var(--color-primary);
+  --accent: var(--color-accent);
+  --border: var(--color-border);
+  --destructive: var(--color-destructive);
+  --success: var(--color-success);
+  --error: var(--color-error);
+  --warning: var(--color-warning);
+
+  /* Gradients - computed from theme colors */
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-accent) 100%
+  );
+  --gradient-glow: radial-gradient(
+    ellipse at center,
+    hsl(from var(--color-primary) h s l / 0.15) 0%,
+    transparent 70%
+  );
+  --gradient-card: linear-gradient(
+    145deg,
+    var(--color-surface) 0%,
+    var(--color-background) 100%
+  );
+
+  /* Shadows - computed from theme colors */
+  --shadow-sm: 0 2px 8px hsl(from var(--color-background) h s 0% / 0.3);
+  --shadow-md: 0 4px 16px hsl(from var(--color-background) h s 0% / 0.4);
+  --shadow-lg: 0 8px 32px hsl(from var(--color-background) h s 0% / 0.5);
+  --shadow-glow: 0 0 40px hsl(from var(--color-primary) h s l / 0.2);
+}
+
+/* Tailwind v4 @theme - references :root variables */
+/* These will use the :root values (which backend can override) */
+@theme {
+  --color-background: 220 25% 6%;
+  --color-foreground: 210 20% 98%;
+  --color-card: 220 25% 10%;
+  --color-card-foreground: 210 20% 98%;
+  --color-popover: 220 25% 10%;
+  --color-popover-foreground: 210 20% 98%;
+  --color-primary: 175 70% 45%;
+  --color-primary-foreground: 220 25% 6%;
+  --color-secondary: 220 20% 14%;
+  --color-secondary-foreground: 210 20% 90%;
+  --color-muted: 220 15% 20%;
+  --color-muted-foreground: 215 15% 55%;
+  --color-accent: 175 60% 35%;
+  --color-accent-foreground: 210 20% 98%;
+  --color-destructive: 0 84.2% 60.2%;
+  --color-destructive-foreground: 210 40% 98%;
+  --color-border: 220 15% 18%;
+  --color-input: 220 15% 18%;
+  --color-ring: 175 70% 45%;
+  --color-glow: 175 70% 45%;
+  --color-surface: 220 25% 12%;
+  --color-surface-hover: 220 25% 16%;
+  --color-text-primary: 210 20% 98%;
+  --color-text-secondary: 215 15% 65%;
+  --color-text-muted: 215 10% 45%;
+  --color-success: 142 76% 36%;
+  --color-error: 0 84.2% 60.2%;
+  --color-warning: 38 92% 50%;
+  --radius: 0.75rem;
+}
+
+/* Light theme variant (optional) */
+.light {
+  --color-background: 0 0% 100%;
+  --color-foreground: 220 25% 6%;
+  --color-card: 0 0% 98%;
+  --color-card-foreground: 220 25% 6%;
+  --color-primary: 175 70% 45%;
+  --color-primary-foreground: 0 0% 100%;
+  --color-secondary: 220 10% 96%;
+  --color-secondary-foreground: 220 25% 6%;
+  --color-muted: 220 10% 90%;
+  --color-muted-foreground: 220 10% 40%;
+  --color-border: 220 10% 85%;
+  --color-surface: 0 0% 98%;
+  --color-surface-hover: 220 10% 95%;
+  --background: 0 0% 100%;
+  --foreground: 220 25% 6%;
+}

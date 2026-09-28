@@ -1,0 +1,41 @@
+/* Base Layer Styles */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'DM Sans', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Sora', system-ui, sans-serif;
+  }
+
+  /* Hide scrollbars for all browsers */
+  * {
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+
+  *::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+
+  /* Ensure scroll functionality still works */
+  html,
+  body {
+    overflow-x: hidden; /* Prevent horizontal scroll */
+  }
+
+  body {
+    overflow-y: auto; /* Allow vertical scroll but hide scrollbar */
+  }
+}
+

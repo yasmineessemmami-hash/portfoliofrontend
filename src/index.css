@@ -1,0 +1,15 @@
+/* Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap");
+
+@import "tailwindcss";
+
+/* Enable Tailwind dark mode using the `dark` class strategy */
+/* stylelint-disable-next-line at-rule-no-unknown */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Import style layers */
+@import "./styles/theme.css";
+@import "./styles/base.css";
+@import "./styles/components.css";
+@import "./styles/utilities.css";
+@import "./styles/animations.css";

@@ -1,0 +1,54 @@
+/* Component Layer Styles */
+@layer components {
+  .glass {
+    @apply bg-card/80 backdrop-blur-xl border border-border/50;
+  }
+
+  .glass-hover {
+    @apply hover:bg-surface-hover/80 transition-colors duration-300;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-primary);
+  }
+
+  .glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .glow-text {
+    text-shadow: 0 0 40px hsl(var(--color-primary) / 0.5);
+  }
+
+  /* Hero background helpers using CSS variables */
+  .bg-hero-primary {
+    background: var(--primary);
+  }
+
+  .bg-hero-accent {
+    background: var(--accent);
+  }
+
+  .bg-hero-name-glow {
+    background: var(--gradient-primary);
+  }
+
+  /* 404 background helpers */
+  .bg-404-error {
+    background: var(--destructive);
+  }
+
+  /* Soft grid background used in hero and 404 */
+  .bg-grid-soft {
+    background-image:
+      linear-gradient(hsl(var(--border) / 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* Generic progress bar that uses a CSS variable for width */
+  .progress-bar-variable {
+    width: var(--progress-width, 75%);
+  }
+}
