@@ -209,8 +209,8 @@ const BlogArticle = () => {
                                 {(() => {
                                     const mediaType = article.media_type || "image";
                                     const mediaValue = article.image; // Backend stores all media types in image field
-                                    const IconComponent = mediaType === "icon" && mediaValue 
-                                        ? resolveIcon(mediaValue) 
+                                    const IconComponent = mediaType === "icon" && mediaValue
+                                        ? resolveIcon(mediaValue)
                                         : null;
 
                                     if (mediaType === "emoji") {
@@ -231,8 +231,8 @@ const BlogArticle = () => {
                                     return (
                                         <div className="aspect-video rounded-xl overflow-hidden bg-secondary/50">
                                             {mediaValue ? (
-                                                <img 
-                                                    src={mediaValue} 
+                                                <img
+                                                    src={mediaValue}
                                                     alt={article.title}
                                                     className="w-full h-full object-cover"
                                                     loading="eager"
@@ -299,14 +299,14 @@ const BlogArticle = () => {
                             >
                                 {(() => {
                                     // Get the first content block if available
-                                    const firstBlockRaw = article.content && article.content.length > 0 
-                                        ? article.content[0] 
+                                    const firstBlockRaw = article.content && article.content.length > 0
+                                        ? article.content[0]
                                         : null;
-                                    
-                                    const firstBlock = typeof firstBlockRaw === 'object' && firstBlockRaw !== null && 'content' in firstBlockRaw 
-                                        ? firstBlockRaw.content 
+
+                                    const firstBlock = typeof firstBlockRaw === 'object' && firstBlockRaw !== null && 'content' in (firstBlockRaw as any)
+                                        ? (firstBlockRaw as any).content
                                         : firstBlockRaw;
-                                    
+
                                     if (typeof firstBlock === 'string') {
                                         // If it's a heading (starts with "## "), remove prefix and render
                                         if (firstBlock.startsWith("## ")) {
@@ -382,7 +382,7 @@ const BlogArticle = () => {
                                                     animate={{ opacity: 1, y: 0 }}
                                                     exit={{ opacity: 0, y: -10 }}
                                                     className="absolute -top-12 left-1/2 transform -translate-x-1/2 px-3 py-1.5 rounded-lg text-xs whitespace-nowrap flex items-center gap-1.5 shadow-lg z-10"
-                                                    style={{ 
+                                                    style={{
                                                         color: 'var(--color-success)',
                                                         backgroundColor: 'hsl(var(--color-success) / 0.1)',
                                                         border: '1px solid hsl(var(--color-success) / 0.2)'
