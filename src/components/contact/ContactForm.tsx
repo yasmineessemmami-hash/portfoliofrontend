@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
-import { Send, CheckCircle, ChevronDown } from "lucide-react";
+import { Send, CheckCircle, ChevronDown, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import emailjs from "@emailjs/browser";
 import { contactService } from "@/services/contact.service";
 import type { ContactForm as ContactFormType, FormField } from "@/types/contact.types";
+
+const EMAILJS_SERVICE_ID  = import.meta.env.VITE_EMAILJS_SERVICE_ID  as string;
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string;
+const EMAILJS_PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY  as string;
 
 interface ContactFormProps {
     form: ContactFormType;
@@ -12,6 +17,7 @@ const ContactForm = ({ form }: ContactFormProps) => {
     const [formData, setFormData] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
 
     // Initialize form data from fields
     useEffect(() => {
@@ -31,24 +37,52 @@ const ContactForm = ({ form }: ContactFormProps) => {
             ...prev,
             [e.target.name]: e.target.value,
         }));
+        if (submitError) setSubmitError(null);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
+        setSubmitError(null);
+
+        const submissionData: Record<string, string> = {};
+        form.fields.forEach((field) => {
+            submissionData[field.name] = formData[field.name] || "";
+        });
+
+        // Build EmailJS template params — these match the template variables
+        const templateParams = {
+            from_name:    submissionData.name    || "",
+            from_email:   submissionData.email   || "",
+            company:      submissionData.company  || "N/A",
+            reason:       submissionData.reason   || "",
+            budget:       submissionData.budget   || "",
+            timeline:     submissionData.timeline || "",
+            subject:      submissionData.subject  || "Portfolio Contact",
+            message:      submissionData.message  || "",
+            to_email:     "yasmineessemmami@gmail.com",
+            reply_to:     submissionData.email   || "",
+        };
 
         try {
-            // Prepare form data with all fields
-            const submissionData: Record<string, string> = {};
-            form.fields.forEach((field) => {
-                submissionData[field.name] = formData[field.name] || '';
-            });
+            // 1️⃣ Send email directly to Yasmine via EmailJS
+            await emailjs.send(
+                EMAILJS_SERVICE_ID,
+                EMAILJS_TEMPLATE_ID,
+                templateParams,
+                EMAILJS_PUBLIC_KEY
+            );
 
-            await contactService.submitContactForm(submissionData);
-            
+            // 2️⃣ Also save submission to backend database (best-effort)
+            try {
+                await contactService.submitContactForm(submissionData);
+            } catch {
+                // Backend save failure doesn't block success — email already sent
+            }
+
             setIsSubmitted(true);
 
-            // Reset form after delay
+            // Reset form after 4 seconds
             setTimeout(() => {
                 const resetData: Record<string, string> = {};
                 form.fields.forEach((field) => {
@@ -56,10 +90,12 @@ const ContactForm = ({ form }: ContactFormProps) => {
                 });
                 setFormData(resetData);
                 setIsSubmitted(false);
-            }, 3000);
+            }, 4000);
         } catch (error) {
-            console.error('Failed to submit contact form:', error);
-            // You might want to show an error message here
+            console.error("Failed to send message:", error);
+            setSubmitError(
+                "Failed to send your message. Please try again or email directly at yasmineessemmami@gmail.com"
+            );
         } finally {
             setIsSubmitting(false);
         }
@@ -142,6 +178,13 @@ const ContactForm = ({ form }: ContactFormProps) => {
                 </div>
             ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Error alert */}
+                    {submitError && (
+                        <div className="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/30 rounded-lg text-destructive text-sm">
+                            <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
+                            <span>{submitError}</span>
+                        </div>
+                    )}
                     {/* Name and Email in grid */}
                     {form.fields.length >= 2 && (
                         <div className="grid sm:grid-cols-2 gap-4">
